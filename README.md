@@ -1,25 +1,16 @@
----
-title: "proteinDrawing"
-author: "B. Bruyneel"
-date: "10-7-2020"
-output: 
-  html_document: 
-    keep_md: yes
----
-
 
 ---
 
 ### <ins>**Contents**</ins>
 
-- [Introduction](#Introduction)
-- [Guide](#Guide)
-- [Final Remarks](#Conclude)
-- [Links](#Links)
+- Introduction
+- Guide
+- Final Remarks
+- Links
 
 ---
 
-### <ins>**Introduction**</ins>{#Introduction}
+### <ins>**Introduction**</ins>
 
 The routines in proteinDrawing.R are meant as an extension of the possibilities provided by the package [drawProteins](https://www.bioconductor.org/packages/release/bioc/html/drawProteins.html). At this moment I decided not to make it into a package myself since it still needs work and debugging.
 
@@ -35,7 +26,7 @@ Work in progress...
 
 ---
 
-### <ins>**Guide**</ins>{#Guide}
+### <ins>**Guide**</ins>
 
 The following R packages are needed for the routines to work:
 
@@ -590,7 +581,7 @@ Table: Proteins - theory table
 
 ---
 
-### <ins>**Final remarks**</ins>{#Conclude}
+### <ins>**Final remarks**</ins>
 
 This code is still very much work in progress. As mentioned before, I'm working on code to get the data into the experimentTable automatically. Although it works I have not debugged it sufficiently to publish it yet.
 
@@ -604,7 +595,7 @@ To be continued...
 
 ---
 
-### <ins>**Links**</ins>{#Links}
+### <ins>**Links**</ins>
 **Github**
 
 [proteinDrawing repository](https://github.com/brennanpincardiff/drawProteins)
