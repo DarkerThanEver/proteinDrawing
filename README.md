@@ -598,7 +598,7 @@ To be continued...
 ### <ins>**Links**</ins>
 **Github**
 
-[proteinDrawing repository](https://github.com/brennanpincardiff/drawProteins)
+[proteinDrawing repository](https://github.com/DarkerThanEver/proteinDrawing)
 
 **R package drawProteins**
 
