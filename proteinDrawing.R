@@ -326,18 +326,6 @@ proteinData <- R6Class("proteinData",
                          initialize = function(){
                            self$wipeData(theory = TRUE, experiment = TRUE)
                          }
-                         # },
-                         # print = function(...){
-                         #   if (private$theMachine=="bruker"){
-                         #     cat(paste0("Mascot Generic File\n",
-                         #                " Original File : ",getFilenameOut(private$allLines[2]),"\n",
-                         #                " Analysis      : ",getFilenameOut(private$allLines[3]),"\n"
-                         #     )
-                         #     )
-                         #   } else {
-                         #     cat("Mascot Generic File\n")
-                         #   }
-                         # }
                        ),
                        active = list(
                        )
