@@ -378,7 +378,7 @@ findCoverage <- function(theData, coverString = "COVER"){
       distinct(sequence, .keep_all = TRUE)  
   }
   return(theData %>%
-    select(begin, end))
+           select(begin, end))
 }
 
 # finds all the modifications (modification) in a theoryTable or experimentTable
@@ -395,7 +395,7 @@ findCoverage <- function(theData, coverString = "COVER"){
 findMods <- function(features, type = "MOD_RES", modification, like = TRUE, outsideCoverage = TRUE,
                      coverageTable = NA, coverString = "COVER"){
   theData <- features
-  the_features_combined <- data.frame()
+  the_features_combined <- theData[-c(1:nrow(theData)),]
   for (counter in 1:max(theData$order)){
     features <- theData[(theData$type == type) & (theData$order == counter), ]
     thelist <- as.logical()
@@ -458,15 +458,15 @@ draw_mods <- function (p, data, mod = NA, type = "MOD_RES", like = TRUE, outside
 # note: inOut determines the position of both the begining and the end of the line
 # note: use color = ... size = ... , type = ...  to specify the looks of the line
 draw_bridge <- function(p, data,inOut = 0.25,...){
-      ordersInThere <- unique(data$order)
-      for (counter in 1:length(ordersInThere)){
-      data2 <- data[data$type == "DISULFID" & data$order == ordersInThere[counter],]
-      if (!identical(data2$type[1],as.character(NA))){
-        p <- p + geom_segment(data = data2,
-                              aes(x=begin, xend=end,
-                                  y = order + inOut, yend = order + inOut), show.legend = FALSE, ...)
-      }
+  ordersInThere <- unique(data$order)
+  for (counter in 1:length(ordersInThere)){
+    data2 <- data[data$type == "DISULFID" & data$order == ordersInThere[counter],]
+    if (!identical(data2$type[1],as.character(NA))){
+      p <- p + geom_segment(data = data2,
+                            aes(x=begin, xend=end,
+                                y = order + inOut, yend = order + inOut), show.legend = FALSE, ...)
     }
+  }
   return(p)
 }
 
