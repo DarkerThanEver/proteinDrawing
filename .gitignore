@@ -40,3 +40,4 @@ vignettes/*.pdf
 
 # leave out project files
 *.Rproj
+*.Rmd
