@@ -212,9 +212,10 @@ proteinData <- R6Class("proteinData",
                          # calculates coverage of protein sequence (which parts have been identified)
                          # dependent on: - a row with type = "CHAIN" & description = name protein & sequence = amino acid
                          #                 sequence protein (usually from database)
-                         #               - column "type" containing entries "COVER"
+                         #               - column "type" containing entries "COVER" (usually) or as defined by the argument
+                         #                 coverString
                          #               - colums "begin" and "end" which are used to determine identified parts of the sequence 
-                         coverage = function(order = NA){
+                         coverage = function(order = NA, coverString = "COVER"){
                            coverageTable <- data.frame(protein = as.character(), coverage = as.numeric(),
                                                        identifications = as.numeric(), stringsAsFactors = FALSE)
                            if (!identical(self$experimentTable,NA)){
@@ -229,7 +230,7 @@ proteinData <- R6Class("proteinData",
                                if (nrow(lengthProt)>0){                                # else : current order has no chain
                                  coverage <- rep(FALSE,nchar(lengthProt$sequence[1]))  # [1] in case there's more than one chain present
                                  tempTable <-  self$experimentTable %>% 
-                                   filter((order == ordersInThere[counter0]) & (type == "COVER")) %>%
+                                   filter((order == ordersInThere[counter0]) & (type == coverString)) %>%
                                    select(begin, end)
                                  if (nrow(tempTable)>0){
                                    for (counter in 1:nrow(tempTable)){
