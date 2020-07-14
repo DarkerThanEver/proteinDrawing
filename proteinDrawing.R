@@ -442,9 +442,6 @@ findMods <- function(features, type = "MOD_RES", modification, like = TRUE, outs
 draw_mods <- function (p, data, mod = NA, type = "MOD_RES", like = TRUE, outsideCoverage = TRUE,
                        coverageTable = NA, inOut = 0.25,...){
   if (!identical(mod,NA)){
-    if (is.numeric(mod)){
-      mod <- theMods(data)[mod]
-    }
     begin = end = description = NULL
     p <- p + ggplot2::geom_point(data = findMods(features = data, type = type, mod = mod, like = like,
                                                  outsideCoverage = outsideCoverage, coverageTable = coverageTable), 
