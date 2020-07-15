@@ -21,8 +21,6 @@ I created these functions because of wanting to automate my own work in field of
 
 One thing missing from the repository is a way to add the experimental data. This will be either added at later date or organized into it's own set of routines. It is however perfectly possible to manually add experimental to the data structures in the routines.
 
-Another missing feature is the possibility to create legends for the drawn protein chains.
-
 I do NOT guarantee these routines are bug-free and using them is at your own risk!
 
 Work in progress...
@@ -610,7 +608,8 @@ d <- customLegend(p, theLegend,
 d
 ```
 
-![](proteinDrawing_files/figure-html/legend 1-1.png)<!-- -->
+<img src="proteinDrawing_files/figure-html/legend 1-1.png" style="display: block; margin: auto;" />
+
 
 ```r
 theLegend2 <- data.frame(labels = c("Unidentified","Identified","N-Acetyl","Phospho (S)","Carbamidomethyl (C)"),
@@ -637,7 +636,8 @@ p <- customLegend(p, theLegend2,
 p
 ```
 
-![](proteinDrawing_files/figure-html/legend 1-2.png)<!-- -->
+<img src="proteinDrawing_files/figure-html/legend 1-2.png" style="display: block; margin: auto;" />
+
 
 Note: using the *customLegend* function will generate warnings because it uses a trick to do its thing. In case of R markdown documents, use *warning=FALSE* and in regular code the combination *suppressWarnings(print(*p*))* (where p is the graph with a customLegend element).
 
