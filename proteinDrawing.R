@@ -442,6 +442,9 @@ findMods <- function(features, type = "MOD_RES", modification, like = TRUE, outs
 draw_mods <- function (p, data, mod = NA, type = "MOD_RES", like = TRUE, outsideCoverage = TRUE,
                        coverageTable = NA, inOut = 0.25,...){
   if (!identical(mod,NA)){
+    # if (is.numeric(mod)){
+    #   mod <- theMods(data)[mod]
+    # }
     begin = end = description = NULL
     p <- p + ggplot2::geom_point(data = findMods(features = data, type = type, mod = mod, like = like,
                                                  outsideCoverage = outsideCoverage, coverageTable = coverageTable), 
@@ -524,3 +527,38 @@ draw_seqPart <- function (p, data, type =NA, description = NA, inOutMin = -0.2, 
                               ...)
   return(p)
 }
+
+# a function that takes a series of colors/fills/shapes and adds it as a legend to the ggplot object p
+# note: each row of the legend data.frame is an item in the legend to be created, so the color, shape, etc
+#       of a single row 'belong' together
+# note: the row-order determines the order in the legend
+# note: use of this function will result in a series of warning messages (one for every item in the legend)
+#       this is 'normal' because the function uses a trick to do its thing. Use suprressWarnings(print())
+#       to prevent seeing the messages while running code. In R markdown use the option 'warning=FALSE'
+#       to not see the messages
+customLegend <- function(p, legend = data.frame(labels = NA, colors = NA, fills = NA, shapes = NA, sizes = NA),
+                         legend.title = "Legend", legend.title.face = "bold", legend.title.size = 12,
+                         legend.element.size = 12, legend.position = "bottom"){
+  for (counter in 1:(nrow(legend))){
+    fakedf <- data.frame(x1x = 0,
+                         y1y = 0,
+                         group = legend$labels[counter])
+    p <- p + geom_point(data = fakedf, aes(x = x1x, y = y1y,
+                                           color = group,
+                                           fill = group,
+                                           shape = group,
+                                           size = group))
+  }
+  p <- p +
+    scale_color_manual(values = legend$colors, breaks = legend$labels) +
+    scale_fill_manual(values = legend$fills, breaks = legend$labels) +
+    scale_shape_manual(values = legend$shapes, breaks = legend$labels) +
+    scale_size_manual(values = legend$sizes, breaks = legend$labels) + 
+    labs(color = legend.title, fill = legend.title, shape = legend.title, size = legend.title) +
+    theme(legend.title=element_text(size = legend.title.size, face = legend.title.face),
+          legend.margin=margin(l=0),
+          legend.text=element_text(size = legend.element.size),
+          legend.position = legend.position)
+  return(p)
+}
+

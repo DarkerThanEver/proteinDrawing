@@ -1,12 +1,21 @@
+---
+title: "proteinDrawing"
+author: "B. Bruyneel"
+date: "15-7-2020"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
 
 ---
 
 ### <ins>**Contents**</ins>
 
-- Introduction
-- Guide
-- Final Remarks
-- Links
+- [Introduction]
+- [Guide]
+- [Final Remarks]
+- [Links]
 
 ---
 
@@ -561,7 +570,7 @@ p
 
 ![](proteinDrawing_files/figure-html/draw the experimental data-1.png)<!-- -->
 
-The object method *proteins* is for convenience, you can also get this tables by doing the table filtering and selection manually
+The object method *proteins* is for convenience, you can also get these tables by doing the table filtering and selection manually
 
 
 Table: Proteins experimental table
@@ -578,6 +587,65 @@ Table: Proteins - theory table
 | order|name      |accession |entry      | taxonomy|
 |-----:|:---------|:---------|:----------|--------:|
 |     1|Ovalbumin |P01012    |OVAL_CHICK |     9031|
+
+---
+
+To add legends to the graph you can use the *customLegend* function.
+
+
+```r
+theLegend <- data.frame(labels = c("N-Acetyl","Phospho (S)","Carbamidomethyl (C)"),
+                        colors = "black",
+                        fills = c("red","darkolivegreen1", "orange"),
+                        shapes = c(22,21,23),
+                        sizes = 4)
+kable(theLegend)
+```
+
+
+
+|labels              |colors |fills           | shapes| sizes|
+|:-------------------|:------|:---------------|------:|-----:|
+|N-Acetyl            |black  |red             |     22|     4|
+|Phospho (S)         |black  |darkolivegreen1 |     21|     4|
+|Carbamidomethyl (C) |black  |orange          |     23|     4|
+
+```r
+d <- customLegend(p, theLegend,
+                  legend.title = "Modifications", legend.position = "right", legend.element.size = 9)
+d
+```
+
+![](proteinDrawing_files/figure-html/legend 1-1.png)<!-- -->
+
+```r
+theLegend2 <- data.frame(labels = c("Unidentified","Identified","N-Acetyl","Phospho (S)","Carbamidomethyl (C)"),
+                         colors = "black",
+                         fills = c("lightsteelblue1","hotpink","red","darkolivegreen1", "orange"),
+                         shapes = c(22,22,22,21,23), sizes = 4)
+
+kable(theLegend2)
+```
+
+
+
+|labels              |colors |fills           | shapes| sizes|
+|:-------------------|:------|:---------------|------:|-----:|
+|Unidentified        |black  |lightsteelblue1 |     22|     4|
+|Identified          |black  |hotpink         |     22|     4|
+|N-Acetyl            |black  |red             |     22|     4|
+|Phospho (S)         |black  |darkolivegreen1 |     21|     4|
+|Carbamidomethyl (C) |black  |orange          |     23|     4|
+
+```r
+p <- customLegend(p, theLegend2,
+                  legend.title = "Coverage &\nModifications", legend.position = "bottom", legend.element.size = 9)
+p
+```
+
+![](proteinDrawing_files/figure-html/legend 1-2.png)<!-- -->
+
+Note: using the *customLegend* function will generate warnings because it uses a trick to do its thing. In case of R markdown documents, use *warning=FALSE* and in regular code the combination *suppressWarnings(print(*p*))* (where p is the graph with a customLegend element).
 
 ---
 
