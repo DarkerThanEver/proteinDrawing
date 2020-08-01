@@ -127,7 +127,7 @@ p <- protData$draw_canvas()
 p <- protData$draw_chains(p, fill = "lightsteelblue1", labels = c("Ovalbumin","BSA"))
 p
 ```
-![](proteinDrawing_files/figure-html/drawing protein data 1a-1.png)<!-- -->
+![](proteinDrawing_files/figure-html/drawingproteindata1a-1.png)<!-- -->
 
 Adding a modification (N-Acetylation), only present in the first protein (Ovalbumin)
 
