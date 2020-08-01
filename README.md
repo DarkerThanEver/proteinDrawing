@@ -26,7 +26,7 @@ I do NOT guarantee these routines are bug-free and using them is at your own ris
 
 Work in progress...
 
-**Update**, 2nd of August 2020: a quite extensive overhaul of the objects and general refining of some of the code. See *proteinDrawing.R* for details.
+**Update**, 1st of August 2020: a quite extensive overhaul of the objects and general refining of some of the code. See *proteinDrawing.R* for details.
 
 ---
 
