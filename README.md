@@ -128,7 +128,7 @@ p <- protData$draw_chains(p, fill = "lightsteelblue1", labels = c("Ovalbumin","B
 p
 ```
 
-<img src="ProteinDrawing_files/figure-html/drawing protein data 1a-1.png" style="display: block; margin: auto;" />
+![](ProteinDrawing_files/figure-html/drawing protein data 1a-1.png)
 
 Adding a modification (N-Acetylation), only present in the first protein (Ovalbumin)
 
@@ -139,7 +139,8 @@ p <- protData$draw_mods(p, modification = "N-acetylglycine",outsideCoverage = TR
 p
 ```
 
-<img src="ProteinDrawing_files/figure-html/drawing protein data 1b-1.png" style="display: block; margin: auto;" />
+![](ProteinDrawing_files/figure-html/drawing protein data 1b-1.png)
+
 
 Add phosphorylation
 
@@ -150,7 +151,7 @@ p <- protData$draw_mods(p, modification = "Phospho",outsideCoverage = TRUE,
 p
 ```
 
-<img src="ProteinDrawing_files/figure-html/drawing protein data 1c-1.png" style="display: block; margin: auto;" />
+![](ProteinDrawing_files/figure-html/drawing protein data 1c-1.png)
 
 Add disulfide bridges, but only to protein 1
 
@@ -160,7 +161,7 @@ p <- protData$draw_bridge(p, protData$table %>% filter(order == 1) , inOut = -0.
 p
 ```
 
-<img src="ProteinDrawing_files/figure-html/drawing protein data 1d-1.png" style="display: block; margin: auto;" />
+![](ProteinDrawing_files/figure-html/drawing protein data 1d-1.png)
 
 Add N-linked glycan sites to only protein 1
 
@@ -172,7 +173,8 @@ p <- protData$draw_mods(p,protData$table %>% filter(order == 1), type = "CARBOHY
 p
 ```
 
-<img src="ProteinDrawing_files/figure-html/drawing protein data 1e-1.png" style="display: block; margin: auto;" />
+![](ProteinDrawing_files/figure-html/drawing protein data 1e-1.png)
+
 Customization of the graph
 
 
@@ -191,7 +193,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-<img src="ProteinDrawing_files/figure-html/drawing protein data 1f-1.png" style="display: block; margin: auto;" />
+![](ProteinDrawing_files/figure-html/drawing protein data 1f-1.png)
 
 *draw_seq()* is a bit of different function. It serves as a way to 'tag' certain areas of the protein.
 You can do this manual as shown below. The function *createTheoryTable* is used to create the right
@@ -307,7 +309,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-<img src="ProteinDrawing_files/figure-html/draw_seqparts-1.png" style="display: block; margin: auto;" />
+![](ProteinDrawing_files/figure-html/draw_seqparts-1.png)
 
 To remove the tags, do the usual table selection 'tricks'
 
@@ -408,7 +410,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-<img src="ProteinDrawing_files/figure-html/drawExperiment 1-1.png" style="display: block; margin: auto;" />
+![](proteinDrawing_files/figure-html/legend 1-1.png)
 
 And you can combine tables. You just need to take care that the order numbers in the theoryChain and experimentChain match!
 
@@ -468,7 +470,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-<img src="ProteinDrawing_files/figure-html/drawExperiment 3-1.png" style="display: block; margin: auto;" />
+![](proteinDrawing_files/figure-html/drawExperiment 3-1.png)
 Below is a variation on this theme
 
 
@@ -523,7 +525,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-<img src="ProteinDrawing_files/figure-html/drawExperiment4-1.png" style="display: block; margin: auto;" />
+![](proteinDrawing_files/figure-html/drawExperiment4-1.png)
 
 Note: through the use of the function object coverage we can calculate the coverage of the protein as found in the experimental data
 
