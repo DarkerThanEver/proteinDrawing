@@ -1,21 +1,22 @@
-
 ---
 
+
 # Protein Drawing
+
 ---
 
 ### <ins>**Contents**</ins>
 
-- [Introduction]
-- [Guide]
-- [Final Remarks]
-- [Links]
+- Introduction
+- Guide
+- Final Remarks
+- Links
 
 ---
 
 ### <ins>**Introduction**</ins>
 
-The routines in proteinDrawing.R are meant as an extension of the possibilities provided by the package [drawProteins](https://www.bioconductor.org/packages/release/bioc/html/drawProteins.html). At this moment I decided not to make it into a package myself since it still needs work and debugging.
+The routines in *proteinDrawing.R* are meant as an extension of the possibilities provided by the package [drawProteins](https://www.bioconductor.org/packages/release/bioc/html/drawProteins.html). At this moment I decided not to make it into a package myself since it still needs work and debugging.
 
 I created these functions because of wanting to automate my own work in field of [proteomics](https://en.wikipedia.org/wiki/Proteomics). Initially I just wanted to be able to easily create result tables using the output of [Mascot](https://www.matrixscience.com/) or [Spectrum Mill](https://www.agilent.com/en/products/software-informatics/mass-spectrometry-software/data-analysis/spectrum-mill) but often a picture is worth a thousand words (or tables for that matter). [drawProteins](https://www.bioconductor.org/packages/release/bioc/html/drawProteins.html) gives a lot of very nice possibilities, but I wanted/needed a bit more to make it work with my own data and "invented" a few extensions/extra features.
 
@@ -24,6 +25,8 @@ One thing missing from the repository is a way to add the experimental data. Thi
 I do NOT guarantee these routines are bug-free and using them is at your own risk!
 
 Work in progress...
+
+**Update**, 2nd of August 2020: a quite extensive overhaul of the objects and general refining of some of the code. See *proteinDrawing.R* for details.
 
 ---
 
@@ -44,6 +47,23 @@ proteinDrawing.R loads the libraries "automatically"
 source("proteinDrawing.R")
 ```
 
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
 Loading protein data ([Ovalbumin (Gallus Gallus)](https://www.uniprot.org/uniprot/P01012)) and [Bovine Serum Albumin](https://www.uniprot.org/uniprot/P02769) from uniProt via drawProteins. The routines immediately generate a table, compatible with the theoryTable in the proteinData objects. 
 
 
@@ -61,10 +81,10 @@ Note: the correct values here are used because 'in general' my own analysis only
 
 
 ```r
-protData <- proteinData$new()
-protData$addTheories(uniProtData, dataMode = TRUE, order = c(1,2), correct = c(1,24))
+protData <- theoryChain$new()
+protData$addTables(uniProtData, dataMode = TRUE, order = c(1,2), correct = c(1,24))
 
-protData$theoryTable %>% filter(order == 1) %>% head()
+protData$table %>% filter(order == 1) %>% head()
 ```
 
 ```
@@ -85,7 +105,7 @@ protData$theoryTable %>% filter(order == 1) %>% head()
 ```
 
 ```r
-protData$theoryTable %>% filter(order == 2) %>% head()
+protData$table %>% filter(order == 2) %>% head()
 ```
 
 ```
@@ -103,56 +123,56 @@ Note that the order column defines to which protein a row of data 'belongs'. By 
 
 
 ```r
-p <- draw_canvas(protData$theoryTable)
-p <- draw_chains(p,protData$theoryTable, fill = "lightsteelblue1", labels = c("Ovalbumin","BSA"))
+p <- protData$draw_canvas()
+p <- protData$draw_chains(p, fill = "lightsteelblue1", labels = c("Ovalbumin","BSA"))
 p
 ```
 
-<img src="proteinDrawing_files/figure-html/drawing protein data 1a-1.png" style="display: block; margin: auto;" />
+<img src="ProteinDrawing_files/figure-html/drawing protein data 1a-1.png" style="display: block; margin: auto;" />
 
 Adding a modification (N-Acetylation), only present in the first protein (Ovalbumin)
 
 
 ```r
-p <- draw_mods(p, protData$theoryTable, "N-acetylglycine",outsideCoverage = TRUE,
-               shape = 22, size = 4, color = "black", fill = "red", inOut = 0.0)
+p <- protData$draw_mods(p, modification = "N-acetylglycine",outsideCoverage = TRUE,
+                        shape = 22, size = 4, color = "black", fill = "red", inOut = 0.0)
 p
 ```
 
-<img src="proteinDrawing_files/figure-html/drawing protein data 1b-1.png" style="display: block; margin: auto;" />
+<img src="ProteinDrawing_files/figure-html/drawing protein data 1b-1.png" style="display: block; margin: auto;" />
 
 Add phosphorylation
 
 
 ```r
-p <- draw_mods(p, protData$theoryTable, "Phospho",outsideCoverage = TRUE,
+p <- protData$draw_mods(p, modification = "Phospho",outsideCoverage = TRUE,
                shape = 21, size = 4, color = "blue", fill = "darkolivegreen1", inOut = 0.1)
 p
 ```
 
-<img src="proteinDrawing_files/figure-html/drawing protein data 1c-1.png" style="display: block; margin: auto;" />
+<img src="ProteinDrawing_files/figure-html/drawing protein data 1c-1.png" style="display: block; margin: auto;" />
 
 Add disulfide bridges, but only to protein 1
 
 
 ```r
-p <- draw_bridge(p, protData$theoryTable %>% filter(order == 1) , inOut = -0.20, color = "orange", size = 2)
+p <- protData$draw_bridge(p, protData$table %>% filter(order == 1) , inOut = -0.20, color = "orange", size = 2)
 p
 ```
 
-<img src="proteinDrawing_files/figure-html/drawing protein data 1d-1.png" style="display: block; margin: auto;" />
+<img src="ProteinDrawing_files/figure-html/drawing protein data 1d-1.png" style="display: block; margin: auto;" />
 
 Add N-linked glycan sites to only protein 1
 
 
 ```r
-p <- draw_mods(p,protData$theoryTable %>% filter(order == 1), type = "CARBOHYD",
-               mod = "N-linked", outsideCoverage = TRUE, inOut = -0.10,
+p <- protData$draw_mods(p,protData$table %>% filter(order == 1), type = "CARBOHYD",
+               modification  = "N-linked", outsideCoverage = TRUE, inOut = -0.10,
                shape = 23, size = 4, color = "black", fill = "green")
 p
 ```
 
-<img src="proteinDrawing_files/figure-html/drawing protein data 1e-1.png" style="display: block; margin: auto;" />
+<img src="ProteinDrawing_files/figure-html/drawing protein data 1e-1.png" style="display: block; margin: auto;" />
 Customization of the graph
 
 
@@ -171,7 +191,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-<img src="proteinDrawing_files/figure-html/drawing protein data 1f-1.png" style="display: block; margin: auto;" />
+<img src="ProteinDrawing_files/figure-html/drawing protein data 1f-1.png" style="display: block; margin: auto;" />
 
 *draw_seq()* is a bit of different function. It serves as a way to 'tag' certain areas of the protein.
 You can do this manual as shown below. The function *createTheoryTable* is used to create the right
@@ -184,8 +204,8 @@ tag1 <- data.frame(type = "TAG1", description = "Test", begin = c(10,45), end = 
 tag2 <- data.frame(type = "TAG2", description = "Test", begin = c(400,500), end = c(425,505),
                    length = c(10,45), order = 2)
 # combine the new data with the theory table
-protData$theoryTable <- bind_rows(protData$theoryTable, tag1)
-protData$theoryTable <- bind_rows(protData$theoryTable, tag2)
+protData$table <- bind_rows(protData$table, tag1)
+protData$table <- bind_rows(protData$table, tag2)
 ```
 
 You can view any combination of *type* & *description* via the object-function *type*.
@@ -193,7 +213,7 @@ This can also be done via the usual table selection methods.
 
 
 ```r
-kable(protData$type(types = c("TAG1","TAG2"),theory = TRUE))
+kable(protData$type(types = c("TAG1","TAG2")))
 ```
 
 
@@ -209,18 +229,18 @@ Use of *drawseq()* to add the regions to the existing picture. Note that all obj
 
 
 ```r
-p <- draw_canvas(protData$theoryTable)
-p <- draw_chains(p,protData$theoryTable, fill = "lightsteelblue1", labels = c("Ovalbumin","BSA"))
-p <- draw_seqPart(p, protData$theoryTable, type = "TAG1", inOutMin = -0.20, inOutMax = 0.20,
+p <- protData$draw_canvas()
+p <- protData$draw_chains(p, fill = "lightsteelblue1", labels = c("Ovalbumin","BSA"))
+p <- protData$draw_seqPart(p, type = "TAG1", inOutMin = -0.20, inOutMax = 0.20,
                   color = "black", fill = "blue", alpha = 0.5)
-p <- draw_seqPart(p, protData$theoryTable, type = "TAG2", inOutMin = -0.20, inOutMax = 0.20,
+p <- protData$draw_seqPart(p, type = "TAG2", inOutMin = -0.20, inOutMax = 0.20,
                   color = "black", fill = "blue", alpha = 0.5)
-p <- draw_mods(p, protData$theoryTable, "N-acetylglycine",outsideCoverage = TRUE,
+p <- protData$draw_mods(p, modification = "N-acetylglycine",outsideCoverage = TRUE,
                shape = 22, size = 4, color = "black", fill = "red", inOut = 0.0)
-p <- draw_mods(p, protData$theoryTable, "Phospho",outsideCoverage = TRUE,
+p <- protData$draw_mods(p, modification = "Phospho",outsideCoverage = TRUE,
                shape = 21, size = 4, color = "blue", fill = "darkolivegreen1", inOut = 0.1)
-p <- draw_bridge(p, protData$theoryTable %>% filter(order == 1) , inOut = -0.20, color = "orange", size = 2)
-p <- draw_mods(p,protData$theoryTable %>% filter(order == 1), type = "CARBOHYD",
+p <- protData$draw_bridge(p, protData$table %>% filter(order == 1) , inOut = -0.20, color = "orange", size = 2)
+p <- protData$draw_mods(p,protData$table %>% filter(order == 1), type = "CARBOHYD",
                mod = "N-linked", outsideCoverage = TRUE, inOut = -0.10,
                shape = 23, size = 4, color = "black", fill = "green")
 p <- p + labs(title = "uniProtData of two proteins + sequence tags") 
@@ -236,17 +256,17 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-![](proteinDrawing_files/figure-html/tag3-1.png)<!-- -->
+![](ProteinDrawing_files/figure-html/tag3-1.png)<!-- -->
 
-You can use the functions *seqPart* or the *seqParts* (of the object) to do a simple search for patterns. This by no means meant as a full replacement for proper alignment algorithms, but merely a *quick and dirty* way to 'tag' certain sections of the protein chains. Since we are here working with theoryTables, which do not contain sequences, you have to provide the protein sequence yourself.
+You can use the functions *seqPart* or the *seqParts* (of the object) to do a simple search for patterns. This by no means meant as a full replacement for proper alignment algorithms, but merely a *quick and dirty* way to 'tag' certain sections of the protein chains. Since we are here working with theoryTables, which do not contain sequences, you have to provide the protein sequence yourself. When using *seqPart* or *seqParts* you can generate tables by keeping the *add* argument to *FALSE*. Switching it to *TRUE* will insert the generated table immediately into the existing table.
 
 
 
 
 ```r
 protData$seqParts(toFind = "SS", orders = c(1,2), type = "SEQUENCE", description = "Double Serine",
-                   theory = TRUE, sequences = c(ova_seq,bsa_seq))
-protData$type("SEQUENCE", theory = TRUE)
+                  sequences = c(ova_seq,bsa_seq), add = TRUE)
+protData$type("SEQUENCE")
 ```
 
 ```
@@ -262,16 +282,16 @@ protData$type("SEQUENCE", theory = TRUE)
 
 
 ```r
-p <- draw_canvas(protData$theoryTable)
-p <- draw_chains(p,protData$theoryTable, fill = "lightsteelblue1", labels = c("Ovalbumin","BSA"))
-p <- draw_seqPart(p, protData$theoryTable, type = "SEQUENCE", inOutMin = -0.20, inOutMax = 0.20,
+p <- protData$draw_canvas()
+p <- protData$draw_chains(p, fill = "lightsteelblue1", labels = c("Ovalbumin","BSA"))
+p <- protData$draw_seqPart(p, type = "SEQUENCE", inOutMin = -0.20, inOutMax = 0.20,
                   color = "black", fill = "blue", alpha = 0.5)
-p <- draw_mods(p, protData$theoryTable, "N-acetylglycine",outsideCoverage = TRUE,
+p <- protData$draw_mods(p, modification = "N-acetylglycine",outsideCoverage = TRUE,
                shape = 22, size = 4, color = "black", fill = "red", inOut = 0.0)
-p <- draw_mods(p, protData$theoryTable, "Phospho",outsideCoverage = TRUE,
+p <- protData$draw_mods(p, modification =  "Phospho",outsideCoverage = TRUE,
                shape = 21, size = 4, color = "blue", fill = "darkolivegreen1", inOut = 0.1)
-p <- draw_bridge(p, protData$theoryTable %>% filter(order == 1) , inOut = -0.20, color = "orange", size = 2)
-p <- draw_mods(p,protData$theoryTable %>% filter(order == 1), type = "CARBOHYD",
+p <- protData$draw_bridge(p, protData$table %>% filter(order == 1) , inOut = -0.20, color = "orange", size = 2)
+p <- protData$draw_mods(p,protData$table %>% filter(order == 1), type = "CARBOHYD",
                mod = "N-linked", outsideCoverage = TRUE, inOut = -0.10,
                shape = 23, size = 4, color = "black", fill = "green")
 p <- p + labs(title = "uniProtData of two proteins") 
@@ -287,14 +307,14 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-<img src="proteinDrawing_files/figure-html/draw_seqparts-1.png" style="display: block; margin: auto;" />
+<img src="ProteinDrawing_files/figure-html/draw_seqparts-1.png" style="display: block; margin: auto;" />
 
 To remove the tags, do the usual table selection 'tricks'
 
 
 ```r
-protData$theoryTable <- protData$theoryTable[!(protData$theoryTable$type %in%
-                                                 c("SEQUENCE","TAG1","TAG2")),]
+protData$table <- protData$table[!(protData$table$type %in%
+                                     c("SEQUENCE","TAG1","TAG2")),]
 ```
 
 If we add experimental data (in this case coming from a Mascot search), we can create a number of tables quickly
@@ -302,14 +322,15 @@ If we add experimental data (in this case coming from a Mascot search), we can c
 
 
 ```r
-protData$addExperiment(expData)
+protData2 <- experimentChain$new()
+protData2$addTable(expData)
 ```
 
 A table showing the peptides found (note: it seems the reduction and alkylation of cysteines was not 100%)
 
 
 ```r
-kable(protData$type("COVER") %>% select(sequence, begin, end, mods))
+kable(protData2$type("COVER") %>% select(sequence, begin, end, mods))
 ```
 
 
@@ -346,7 +367,7 @@ kable(protData$type("COVER") %>% select(sequence, begin, end, mods))
 A table of the modifications found
 
 ```r
-kable(protData$type() %>% select(description, begin) %>% rename(position = begin) %>% arrange(description))
+kable(protData2$type() %>% select(description, begin) %>% rename(position = begin) %>% arrange(description))
 ```
 
 
@@ -365,14 +386,14 @@ And of course a drawing of what was found
 
 
 ```r
-p <- draw_canvas(protData$experimentTable)
-p <- draw_chains(p,protData$experimentTable, fill = "lightsteelblue1")
-p <- draw_coverage(p, protData$experimentTable, color = "black", fill = "hotpink")
-p <- draw_mods(p, protData$experimentTable, "Carbamido",outsideCoverage = FALSE,
+p <- protData2$draw_canvas()
+p <- protData2$draw_chains(p, fill = "lightsteelblue1")
+p <- protData2$draw_coverage(p, color = "black", fill = "hotpink")
+p <- protData2$draw_mods(p,  modification = "Carbamido",outsideCoverage = FALSE,
                shape = 21, size = 4, color = "black", fill = "orange", inOut = 0.05)
-p <- draw_mods(p, protData$experimentTable, "Acetyl",outsideCoverage = FALSE,
+p <- protData2$draw_mods(p, modification =  "Acetyl",outsideCoverage = FALSE,
                shape = 22, size = 4, color = "black", fill = "red", inOut = 0.0)
-p <- draw_mods(p, protData$experimentTable, "Phospho",outsideCoverage = FALSE,
+p <- protData2$draw_mods(p, modification = "Phospho",outsideCoverage = FALSE,
                shape = 21, size = 4, color = "blue", fill = "darkolivegreen1", inOut = 0.1)
 p <- p + labs(title = "Experimental data Ovalbumin digestion") 
 p <- p + theme_bw(base_size = 20) +
@@ -387,47 +408,50 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-<img src="proteinDrawing_files/figure-html/drawExperiment 1-1.png" style="display: block; margin: auto;" />
+<img src="ProteinDrawing_files/figure-html/drawExperiment 1-1.png" style="display: block; margin: auto;" />
+
+And you can combine tables. You just need to take care that the order numbers in the theoryChain and experimentChain match!
+
 
 
 To draw possible digestion positions
 
 
 ```r
-tempTable <- protData$theoryTable
+tempTable <- protData$table
 tempTable$order <- 2
-protData$addTheory(tempTable)
+protData$addTable(tempTable)
 
-protData$seqParts(toFind = "R",orders = 2,type = "Cut",description = "Trypsin",theory = TRUE,
-                  sequences = protData$proteins()$sequence[1])
-protData$seqParts(toFind = "K",orders = 2,type = "Cut",description = "Trypsin",theory = TRUE,
-                  sequences = protData$proteins()$sequence[1])
-protData$seqParts(toFind = "P",orders = 2,type = "Proline",description = "Proline",theory = TRUE,
-                  sequences = protData$proteins()$sequence[1])
+protData$seqPart(toFind = "R",order = 2,type = "Cut",description = "Trypsin",
+                  theSequence = protData2$proteins$sequence[1], add = TRUE)
+protData$seqPart(toFind = "K",order = 2,type = "Cut",description = "Trypsin",
+                  theSequence = protData2$proteins$sequence[1], add = TRUE)
+protData$seqPart(toFind = "P",order = 2,type = "Proline",description = "Proline",
+                  theSequence = protData2$proteins$sequence[1], add = TRUE)
 
-p <- draw_canvas(protData$theoryTable)
-p <- draw_chains(p,protData$theoryTable, fill = "lightsteelblue1", labels = c("Experiment","Digestion sites"))
-p <- draw_coverage(p, protData$experimentTable, color = "black", fill = "hotpink")
-p <- draw_mods(p, protData$experimentTable, "Carbamido",outsideCoverage = FALSE,
+p <- protData$draw_canvas()
+p <- protData$draw_chains(p, fill = "lightsteelblue1", labels = c("Experiment","Digestion sites"))
+p <- protData2$draw_coverage(p, color = "black", fill = "hotpink")
+p <- protData2$draw_mods(p, modification = "Carbamido",outsideCoverage = FALSE,
                shape = 21, size = 4, color = "black", fill = "orange", inOut = 0.05)
-p <- draw_mods(p, protData$experimentTable, "Acetyl",outsideCoverage = FALSE,
+p <- protData2$draw_mods(p, modification = "Acetyl",outsideCoverage = FALSE,
                shape = 22, size = 4, color = "black", fill = "red", inOut = 0.0)
-p <- draw_mods(p, protData$experimentTable, "Phospho",outsideCoverage = FALSE,
+p <- protData2$draw_mods(p, modification = "Phospho",outsideCoverage = FALSE,
                shape = 21, size = 4, color = "blue", fill = "darkolivegreen1", inOut = 0.1)
 # --- add theoryTable items
 # show theoretical phosphorylation
-p <- draw_mods(p, protData$theoryTable %>% filter(order == 1), "Phospho",outsideCoverage = TRUE,
+p <- protData$draw_mods(p, protData$table %>% filter(order == 1), modification = "Phospho",outsideCoverage = TRUE,
                shape = 21, size = 4, color = "black", fill = "yellow", inOut = -0.1)
 # show known disulfide bridges
-p <- draw_bridge(p, protData$theoryTable %>% filter(order == 1), inOut = -0.05, size = 2, color = "blue")
+p <- protData$draw_bridge(p, protData$table %>% filter(order == 1), inOut = -0.05, size = 2, color = "blue")
 # show N-glycan position
-p <- draw_mods(p,protData$theoryTable %>% filter(order == 1), type = "CARBOHYD",
-               mod = "N-linked", outsideCoverage = TRUE, inOut = -0.15,
+p <- protData$draw_mods(p,protData$table %>% filter(order == 1), type = "CARBOHYD",
+               modification = "N-linked", outsideCoverage = TRUE, inOut = -0.15,
                shape = 23, size = 4, color = "black", fill = "green")
 # add cutting points of digestion (blue) together with position of prolines (red)
-p <- draw_seqPart(p, protData$theoryTable, type = "Cut", inOutMin = -0.20, inOutMax = 0.20,
+p <- protData$draw_seqPart(p, type = "Cut", inOutMin = -0.20, inOutMax = 0.20,
                   color = "blue", fill = "blue", alpha = 0.5)
-p <- draw_seqPart(p, protData$theoryTable, type = "Proline", inOutMin = -0.20, inOutMax = 0.20,
+p <- protData$draw_seqPart(p, type = "Proline", inOutMin = -0.20, inOutMax = 0.20,
                   color = "red", fill = "red", alpha = 0.5)
 
 # ---
@@ -444,45 +468,45 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-<img src="proteinDrawing_files/figure-html/drawExperiment 3-1.png" style="display: block; margin: auto;" />
+<img src="ProteinDrawing_files/figure-html/drawExperiment 3-1.png" style="display: block; margin: auto;" />
 Below is a variation on this theme
 
 
 ```r
 # remove order 2 data in the theoryTable
-protData$wipeData(deleteOrder = 2, theory = TRUE)
+protData$wipeData(deleteOrder = 2)
 
-protData$seqParts(toFind = "R",orders = 1,type = "Cut",description = "Trypsin",theory = TRUE,
-                  sequences = protData$proteins()$sequence[1])
-protData$seqParts(toFind = "K",orders = 1,type = "Cut",description = "Trypsin",theory = TRUE,
-                  sequences = protData$proteins()$sequence[1])
-protData$seqParts(toFind = "P",orders = ,type = "Proline",description = "Proline",theory = TRUE,
-                  sequences = protData$proteins()$sequence[1])
+protData$seqPart(toFind = "R",order = 1,type = "Cut",description = "Trypsin",
+                  theSequence = protData2$proteins$sequence[1], add = TRUE)
+protData$seqPart(toFind = "K",order = 1,type = "Cut",description = "Trypsin",
+                  theSequence = protData2$proteins$sequence[1], add= TRUE)
+protData$seqPart(toFind = "P",order = ,type = "Proline",description = "Proline",
+                  theSequence = protData2$proteins$sequence[1], add = TRUE)
 
-p <- draw_canvas(protData$experimentTable)
-p <- draw_chains(p,protData$experimentTable, fill = "lightsteelblue1", labels = c("Experiment"))
-p <- draw_coverage(p, protData$experimentTable, color = "black", fill = "hotpink",
+p <- protData2$draw_canvas()
+p <- protData2$draw_chains(p, fill = "lightsteelblue1", labels = c("Experiment"))
+p <- protData2$draw_coverage(p, color = "black", fill = "hotpink",
                    inOutMin = 0.13, inOutMax = 0.2)
-p <- draw_mods(p, protData$experimentTable, "Carbamido",outsideCoverage = FALSE,
+p <- protData2$draw_mods(p, modification = "Carbamido",outsideCoverage = FALSE,
                shape = 21, size = 4, color = "black", fill = "orange", inOut = 0.05)
-p <- draw_mods(p, protData$experimentTable, "Acetyl",outsideCoverage = FALSE,
+p <- protData2$draw_mods(p, modification =  "Acetyl",outsideCoverage = FALSE,
                shape = 22, size = 4, color = "black", fill = "red", inOut = 0.0)
-p <- draw_mods(p, protData$experimentTable, "Phospho",outsideCoverage = FALSE,
+p <- protData2$draw_mods(p, modification = "Phospho",outsideCoverage = FALSE,
                shape = 21, size = 4, color = "blue", fill = "darkolivegreen1", inOut = 0.1)
 # --- add theoryTable items
 # show theoretical phosphorylation
-p <- draw_mods(p, protData$theoryTable %>% filter(order == 1), "Phospho",outsideCoverage = TRUE,
+p <- protData$draw_mods(p, protData$table %>% filter(order == 1), modification = "Phospho",outsideCoverage = TRUE,
                shape = 21, size = 4, color = "black", fill = "yellow", inOut = -0.1)
 # show known disulfide bridges
-p <- draw_bridge(p, protData$theoryTable %>% filter(order == 1), inOut = -0.05, size = 2, color = "orange")
+p <- protData$draw_bridge(p, protData$table %>% filter(order == 1), inOut = -0.05, size = 2, color = "orange")
 # show N-glycan position
-p <- draw_mods(p,protData$theoryTable %>% filter(order == 1), type = "CARBOHYD",
-               mod = "N-linked", outsideCoverage = TRUE, inOut = -0.15,
+p <- protData$draw_mods(p,protData$table %>% filter(order == 1), type = "CARBOHYD",
+               modification = "N-linked", outsideCoverage = TRUE, inOut = -0.15,
                shape = 23, size = 4, color = "black", fill = "green")
 # add cutting points of digestion (blue) together with position of prolines (red)
-p <- draw_seqPart(p, protData$theoryTable, type = "Cut", inOutMin = 0.20, inOutMax = 0.25,
+p <- protData$draw_seqPart(p, type = "Cut", inOutMin = 0.20, inOutMax = 0.25,
                   color = "blue", fill = "blue", alpha = 0.5)
-p <- draw_seqPart(p, protData$theoryTable, type = "Proline", inOutMin = 0.20, inOutMax = 0.25,
+p <- protData$draw_seqPart(p, type = "Proline", inOutMin = 0.20, inOutMax = 0.25,
                   color = "red", fill = "red", alpha = 0.5)
 # ---
 
@@ -499,13 +523,13 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-<img src="proteinDrawing_files/figure-html/drawExperiment4-1.png" style="display: block; margin: auto;" />
+<img src="ProteinDrawing_files/figure-html/drawExperiment4-1.png" style="display: block; margin: auto;" />
 
 Note: through the use of the function object coverage we can calculate the coverage of the protein as found in the experimental data
 
 
 ```r
-kable(protData$coverage(), digits = 2, col.names = c("Protein","Coverage (%)", "Identified Peptides"))
+kable(protData2$coverage(), digits = 2, col.names = c("Protein","Coverage (%)", "Identified Peptides"))
 ```
 
 
@@ -514,20 +538,21 @@ kable(protData$coverage(), digits = 2, col.names = c("Protein","Coverage (%)", "
 |:-------------|------------:|-------------------:|
 |1::OVAL_CHICK |        66.75|                  26|
 
+
 If we 'fake' a second protein digestion with the current digestion results, you get an idea of how multiple results may look
 
 
 
 ```r
-tempTable <- protData$experimentTable
+tempTable <- protData2$table
 # change order #
 tempTable$order <- 2
 # remove some identifications (COVER) + one modification
 tempTable <- tempTable[-c(23,24,10,20,29),]
 # add to the experimentTable
-protData$addExperiment(tempTable)
+protData2$addTable(tempTable)
 
-kable(protData$coverage(), digits = 2, col.names = c("Protein","Coverage (%)", "Identified Peptides"))
+kable(protData2$coverage(), digits = 2, col.names = c("Protein","Coverage (%)", "Identified Peptides"))
 ```
 
 
@@ -537,15 +562,16 @@ kable(protData$coverage(), digits = 2, col.names = c("Protein","Coverage (%)", "
 |1::OVAL_CHICK |        66.75|                  26|
 |1::OVAL_CHICK |        52.47|                  22|
 
+
 ```r
-p <- draw_canvas(protData$experimentTable)
-p <- draw_chains(p,protData$experimentTable, fill = "lightsteelblue1", labels = c("Experiment 1","Experiment 2"))
-p <- draw_coverage(p, protData$experimentTable, color = "black", fill = "hotpink")
-p <- draw_mods(p, protData$experimentTable, "Carbamido",outsideCoverage = FALSE,
+p <- protData2$draw_canvas()
+p <- protData2$draw_chains(p, fill = "lightsteelblue1", labels = c("Experiment 1","Experiment 2"))
+p <- protData2$draw_coverage(p, color = "black", fill = "hotpink")
+p <- protData2$draw_mods(p, modification =  "Carbamido",outsideCoverage = FALSE,
                shape = 21, size = 4, color = "black", fill = "orange", inOut = 0.05)
-p <- draw_mods(p, protData$experimentTable, "Acetyl",outsideCoverage = FALSE,
+p <- protData2$draw_mods(p, modification =  "Acetyl",outsideCoverage = FALSE,
                shape = 22, size = 4, color = "black", fill = "red", inOut = 0.0)
-p <- draw_mods(p, protData$experimentTable, "Phospho",outsideCoverage = FALSE,
+p <- protData2$draw_mods(p, modification = "Phospho",outsideCoverage = FALSE,
                shape = 21, size = 4, color = "blue", fill = "darkolivegreen1", inOut = 0.1)
 p <- p + labs(title = "Experimental data Ovalbumin digestion 1 & 2") 
 p <- p + theme_bw(base_size = 20) +
@@ -560,7 +586,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-![](proteinDrawing_files/figure-html/draw the experimental data-1.png)<!-- -->
+![](ProteinDrawing_files/figure-html/draw the experimental data-1.png)<!-- -->
 
 The object method *proteins* is for convenience, you can also get these tables by doing the table filtering and selection manually
 
@@ -608,8 +634,7 @@ d <- customLegend(p, theLegend,
 d
 ```
 
-<img src="proteinDrawing_files/figure-html/legend 1-1.png" style="display: block; margin: auto;" />
-
+![](ProteinDrawing_files/figure-html/legend 1-1.png)<!-- -->
 
 ```r
 theLegend2 <- data.frame(labels = c("Unidentified","Identified","N-Acetyl","Phospho (S)","Carbamidomethyl (C)"),
@@ -636,8 +661,7 @@ p <- customLegend(p, theLegend2,
 p
 ```
 
-<img src="proteinDrawing_files/figure-html/legend 1-2.png" style="display: block; margin: auto;" />
-
+![](ProteinDrawing_files/figure-html/legend 1-2.png)<!-- -->
 
 Note: using the *customLegend* function will generate warnings because it uses a trick to do its thing. In case of R markdown documents, use *warning=FALSE* and in regular code the combination *suppressWarnings(print(*p*))* (where p is the graph with a customLegend element).
 
@@ -647,7 +671,9 @@ Note: using the *customLegend* function will generate warnings because it uses a
 
 This code is still very much work in progress. As mentioned before, I'm working on code to get the data into the experimentTable automatically. Although it works I have not debugged it sufficiently to publish it yet.
 
-Also: I've attempted to make the code as flexible as possible to allow for extensions and other ideas (which are already in the works). The flexibility comes at a price however and it's easy to get unexpected/unwanted effects. Most of these stem from the theoryTable and the experimentTable having incompatible *order* columns.
+Also: I've attempted to make the code as flexible as possible to allow for extensions and other ideas (which are already in the works). The flexibility comes at a price however and it's easy to get unexpected/unwanted effects. Most of these stem from theoretical tables and experiment tables having incompatible *order* columns.
+
+It's quite possible that using S3 object oriented programming would make synthax easier for users. However I myself feel more comfortable with the style of R6. Nothing really wrong with the S3 & S4 'systems', but this feels more natural to me.
 
 Another remark: the code is not the most beautiful R code. It works good enough though to be used regularly by myself. Most debugging comes from simply working with it; I'm sure there's a lot or smaller/bigger errors that I haven't catched yet: feel free to mail [me](mailto:bruyneel.ben@gmail.com).
 
