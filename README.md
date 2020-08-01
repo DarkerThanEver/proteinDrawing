@@ -410,7 +410,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-![](proteinDrawing_files/figure-html/legend1-1.png)<!-- -->
+![](proteinDrawing_files/figure-html/drawExperiment1-1.png)<!-- -->
 
 And you can combine tables. You just need to take care that the order numbers in the theoryChain and experimentChain match!
 
