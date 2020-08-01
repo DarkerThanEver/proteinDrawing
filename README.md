@@ -138,7 +138,7 @@ p <- protData$draw_mods(p, modification = "N-acetylglycine",outsideCoverage = TR
 p
 ```
 
-![](proteinDrawing_files/figure-html/drawing protein data 1b-1.png)<!-- -->
+![](proteinDrawing_files/figure-html/drawingproteindata1b-1.png)<!-- -->
 
 
 Add phosphorylation
@@ -150,7 +150,7 @@ p <- protData$draw_mods(p, modification = "Phospho",outsideCoverage = TRUE,
 p
 ```
 
-![](proteinDrawing_files/figure-html/drawing protein data 1c-1.png)<!-- -->
+![](proteinDrawing_files/figure-html/drawingproteindata1c-1.png)<!-- -->
 
 Add disulfide bridges, but only to protein 1
 
@@ -160,7 +160,7 @@ p <- protData$draw_bridge(p, protData$table %>% filter(order == 1) , inOut = -0.
 p
 ```
 
-![](proteinDrawing_files/figure-html/drawing protein data 1d-1.png)<!-- -->
+![](proteinDrawing_files/figure-html/drawingproteindata1d-1.png)<!-- -->
 
 Add N-linked glycan sites to only protein 1
 
@@ -172,7 +172,7 @@ p <- protData$draw_mods(p,protData$table %>% filter(order == 1), type = "CARBOHY
 p
 ```
 
-![](proteinDrawing_files/figure-html/drawing protein data 1e-1.png)<!-- -->
+![](proteinDrawing_files/figure-html/drawingproteindata1e-1.png)<!-- -->
 
 Customization of the graph
 
@@ -192,7 +192,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-![](proteinDrawing_files/figure-html/drawing protein data 1f-1.png)<!-- -->
+![](proteinDrawing_files/figure-html/drawingproteindata1f-1.png)<!-- -->
 
 *draw_seq()* is a bit of different function. It serves as a way to 'tag' certain areas of the protein.
 You can do this manual as shown below. The function *createTheoryTable* is used to create the right
@@ -382,6 +382,7 @@ kable(protData2$type() %>% select(description, begin) %>% rename(position = begi
 |Carbamidomethyl (C)     |      367|
 |Phospho (ST)            |       68|
 |Phospho (ST)            |      344|
+
 And of course a drawing of what was found
 (note: BSA data in the theoryTable was removed earlier)
 
@@ -409,7 +410,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-![](proteinDrawing_files/figure-html/legend 1-1.png)<!-- -->
+![](proteinDrawing_files/figure-html/legend1-1.png)<!-- -->
 
 And you can combine tables. You just need to take care that the order numbers in the theoryChain and experimentChain match!
 
@@ -469,7 +470,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-![](proteinDrawing_files/figure-html/drawExperiment 3-1.png)<!-- -->
+![](proteinDrawing_files/figure-html/drawExperiment3-1.png)<!-- -->
 Below is a variation on this theme
 
 
@@ -587,7 +588,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-![](proteinDrawing_files/figure-html/draw the experimental data-1.png)<!-- -->
+![](proteinDrawing_files/figure-html/drawtheexperimentaldata-1.png)<!-- -->
 
 The object method *proteins* is for convenience, you can also get these tables by doing the table filtering and selection manually
 
@@ -635,7 +636,7 @@ d <- customLegend(p, theLegend,
 d
 ```
 
-![](proteinDrawing_files/figure-html/legend 1-1.png)<!-- -->
+![](proteinDrawing_files/figure-html/legend1-1.png)<!-- -->
 
 ```r
 theLegend2 <- data.frame(labels = c("Unidentified","Identified","N-Acetyl","Phospho (S)","Carbamidomethyl (C)"),
@@ -662,7 +663,7 @@ p <- customLegend(p, theLegend2,
 p
 ```
 
-![](proteinDrawing_files/figure-html/legend 1-2.png)<!-- -->
+![](proteinDrawing_files/figure-html/legend1-2.png)<!-- -->
 
 Note: using the *customLegend* function will generate warnings because it uses a trick to do its thing. In case of R markdown documents, use *warning=FALSE* and in regular code the combination *suppressWarnings(print(*p*))* (where p is the graph with a customLegend element).
 
