@@ -128,7 +128,7 @@ p <- protData$draw_chains(p, fill = "lightsteelblue1", labels = c("Ovalbumin","B
 p
 ```
 
-![](ProteinDrawing_files/figure-html/drawing protein data 1a-1.png)
+![](proteinDrawing_files/figure-html/drawing protein data 1a-1.png)
 
 Adding a modification (N-Acetylation), only present in the first protein (Ovalbumin)
 
@@ -139,7 +139,7 @@ p <- protData$draw_mods(p, modification = "N-acetylglycine",outsideCoverage = TR
 p
 ```
 
-![](ProteinDrawing_files/figure-html/drawing protein data 1b-1.png)
+![](proteinDrawing_files/figure-html/drawing protein data 1b-1.png)
 
 
 Add phosphorylation
@@ -151,7 +151,7 @@ p <- protData$draw_mods(p, modification = "Phospho",outsideCoverage = TRUE,
 p
 ```
 
-![](ProteinDrawing_files/figure-html/drawing protein data 1c-1.png)
+![](proteinDrawing_files/figure-html/drawing protein data 1c-1.png)
 
 Add disulfide bridges, but only to protein 1
 
@@ -161,7 +161,7 @@ p <- protData$draw_bridge(p, protData$table %>% filter(order == 1) , inOut = -0.
 p
 ```
 
-![](ProteinDrawing_files/figure-html/drawing protein data 1d-1.png)
+![](proteinDrawing_files/figure-html/drawing protein data 1d-1.png)
 
 Add N-linked glycan sites to only protein 1
 
@@ -173,7 +173,7 @@ p <- protData$draw_mods(p,protData$table %>% filter(order == 1), type = "CARBOHY
 p
 ```
 
-![](ProteinDrawing_files/figure-html/drawing protein data 1e-1.png)
+![](proteinDrawing_files/figure-html/drawing protein data 1e-1.png)
 
 Customization of the graph
 
@@ -193,7 +193,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-![](ProteinDrawing_files/figure-html/drawing protein data 1f-1.png)
+![](proteinDrawing_files/figure-html/drawing protein data 1f-1.png)
 
 *draw_seq()* is a bit of different function. It serves as a way to 'tag' certain areas of the protein.
 You can do this manual as shown below. The function *createTheoryTable* is used to create the right
@@ -258,7 +258,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-![](ProteinDrawing_files/figure-html/tag3-1.png)<!-- -->
+![](proteinDrawing_files/figure-html/tag3-1.png)<!-- -->
 
 You can use the functions *seqPart* or the *seqParts* (of the object) to do a simple search for patterns. This by no means meant as a full replacement for proper alignment algorithms, but merely a *quick and dirty* way to 'tag' certain sections of the protein chains. Since we are here working with theoryTables, which do not contain sequences, you have to provide the protein sequence yourself. When using *seqPart* or *seqParts* you can generate tables by keeping the *add* argument to *FALSE*. Switching it to *TRUE* will insert the generated table immediately into the existing table.
 
@@ -309,7 +309,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-![](ProteinDrawing_files/figure-html/draw_seqparts-1.png)
+![](proteinDrawing_files/figure-html/draw_seqparts-1.png)
 
 To remove the tags, do the usual table selection 'tricks'
 
@@ -588,7 +588,7 @@ p <- p + theme_bw(base_size = 20) +
 p
 ```
 
-![](ProteinDrawing_files/figure-html/draw the experimental data-1.png)<!-- -->
+![](proteinDrawing_files/figure-html/draw the experimental data-1.png)<!-- -->
 
 The object method *proteins* is for convenience, you can also get these tables by doing the table filtering and selection manually
 
@@ -636,7 +636,7 @@ d <- customLegend(p, theLegend,
 d
 ```
 
-![](ProteinDrawing_files/figure-html/legend 1-1.png)<!-- -->
+![](proteinDrawing_files/figure-html/legend 1-1.png)<!-- -->
 
 ```r
 theLegend2 <- data.frame(labels = c("Unidentified","Identified","N-Acetyl","Phospho (S)","Carbamidomethyl (C)"),
@@ -663,7 +663,7 @@ p <- customLegend(p, theLegend2,
 p
 ```
 
-![](ProteinDrawing_files/figure-html/legend 1-2.png)<!-- -->
+![](proteinDrawing_files/figure-html/legend 1-2.png)<!-- -->
 
 Note: using the *customLegend* function will generate warnings because it uses a trick to do its thing. In case of R markdown documents, use *warning=FALSE* and in regular code the combination *suppressWarnings(print(*p*))* (where p is the graph with a customLegend element).
 
