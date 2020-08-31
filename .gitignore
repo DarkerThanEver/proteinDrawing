@@ -41,3 +41,6 @@ vignettes/*.pdf
 # leave out project files
 *.Rproj
 *.Rmd
+
+# leave out directory
+non-www/
