@@ -272,6 +272,7 @@ chainData <- R6Class("chainData",
                        },
                        initialize = function(){
                          self$createTable()
+                         invisible(self)
                        }
                      ),
                      active = list(
@@ -331,6 +332,7 @@ theoryChain <- R6Class("theoryChain",
                              rownames(info_sp) <- NULL
                              self$table <- bind_rows(self$table, info_sp)
                            }
+                           invisible(self)
                          },
                          # same as addTheory, but now can work with either theData = list of filenames to load (dataMode = FALSE)
                          # or a data.frame containing more than one value for order
@@ -365,6 +367,7 @@ theoryChain <- R6Class("theoryChain",
                                }
                              }
                            }
+                           invisible(self)
                          },
                          # finds and returns all places where the string toFind is present in the provided sequence
                          # order is important to combine with object table. Use type = ...  to give 'unique' identifier
@@ -471,7 +474,8 @@ experimentChain <- R6Class("experimentChain",
                                    theData$order <- order
                                  }
                                  self$table <- bind_rows(self$table,theData)
-                               } 
+                               }
+                               invisible(self)
                              },
                              # same as addTheory, but now can work with either theData = list of filenames to load (dataMode = FALSE)
                              # or a data.frame containing more than one value for order
@@ -486,6 +490,7 @@ experimentChain <- R6Class("experimentChain",
                                    self$addTable(theData %>% filter(order == ordersInThere[counter]), order = order[counter])
                                  }
                                }
+                               invisible(self)
                              },
                              # finds and returns all places where the string toFind is present in the provided sequence
                              # order is important to combine with object table. Use type = ...  to give 'unique' identifier
