@@ -115,8 +115,15 @@ chainData <- R6Class("chainData",
                        #                (experiment) table with rows of type == "COVER"
                        # coverString: this can be used in the case of more than one sequence of coverage data in the table
                        #              eg when coverage data is present of different digestions
+                       # seqAllow: defines at which sequences the mod is allowed to be. In the original definition
+                       #           modifications (type == "MOD_RES") did not have sequence data. The modifications at
+                       #           different amino acids was defined via the 'description' eg 'Carbamidomethyl (C)'
+                       #           By using seqAllow it's possible to (if sequence is defined) to select eg
+                       #           modification == "Oxidation" and seqAllow = c('M', 'C') for oxidations at
+                       #           Methionine AND Cysteine or separately via seqAllow = "M". If not defined (NA)
+                       #           then this argument is ignored
                        findMods = function(data = self$table, type = "MOD_RES", modification, like = TRUE,
-                                            outsideCoverage = TRUE,
+                                            seqAllow = NA, outsideCoverage = TRUE,
                                             coverageTable = NA, coverString = "COVER"){
                          theData <- data
                          the_features_combined <- theData[-c(1:nrow(theData)),]
@@ -126,10 +133,19 @@ chainData <- R6Class("chainData",
                            thelist <- as.logical()
                            if (!like){
                              for (counter2 in 1:nrow(data)){
-                               thelist <- append(thelist,(data$description[counter2] == modification))
+                               if (identical(seqAllow,NA)){
+                                 thelist <- append(thelist,(data$description[counter2] == modification))
+                               } else {
+                                 thelist <- append(thelist,(data$description[counter2] == modification) &
+                                                           (data$sequence %in% seqAllow))
+                               }
                              }
                            } else {
-                             thelist <- grepl(modification,data$description)
+                             if (identical(seqAllow,NA)){
+                               thelist <- grepl(modification,data$description)
+                             } else {
+                               thelist <- grepl(modification,data$description) & (data$sequence %in% seqAllow)
+                             }
                            }
                            the_features <- data[thelist, ]
                            if (nrow(the_features)>0){
@@ -173,7 +189,7 @@ chainData <- R6Class("chainData",
                          data <- data %>%
                            filter(type == coverString)
                          p <- p + ggplot2::geom_rect(data = data[data$type == coverString,],
-                                                     mapping = ggplot2::aes(xmin = begin, xmax = end-1,
+                                                     mapping = ggplot2::aes(xmin = begin, xmax = end+1,
                                                                             ymin = order + inOutMin, ymax = order + inOutMax),
                                                      ...)
                          return(p)
@@ -185,13 +201,13 @@ chainData <- R6Class("chainData",
                        # note: use color = ... fill = ...  size = ... shape = ... to specify the looks of the modifications
                        # note: a modification is defined by both the type and description columns. The mod argument = the description
                        draw_mods = function (p, data = self$table, modification = NA, type = "MOD_RES",
-                                             like = TRUE, outsideCoverage = TRUE,
+                                             seqAllow = NA, like = TRUE, outsideCoverage = TRUE,
                                               coverageTable = NA, inOut = 0.25,...){
                          if (!identical(modification,NA)){
                            begin = end = description = NULL
                            p <- p + ggplot2::geom_point(data = self$findMods(data = data, type = type,
                                                                              modification = modification,
-                                                                             like = like,
+                                                                             like = like, seqAllow = seqAllow,
                                                                              outsideCoverage = outsideCoverage,
                                                                              coverageTable = coverageTable), 
                                                         ggplot2::aes(x = begin, y = order + inOut),...)
@@ -556,7 +572,7 @@ experimentChain <- R6Class("experimentChain",
                                      select(begin, end)
                                    if (nrow(tempTable)>0){
                                      for (counter in 1:nrow(tempTable)){
-                                       for (counter2 in tempTable[counter,]$begin:(tempTable[counter,]$end-1)){
+                                       for (counter2 in (tempTable[counter,]$begin):(tempTable[counter,]$end)){
                                          coverage[counter2] <- TRUE
                                        }
                                      }
